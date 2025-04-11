@@ -10,7 +10,7 @@ export function calculateSum(numbers: number[]): number {
     return numbers.reduce((acc, num) => acc + num, 0);
 };
 
-export async function fetchData(url: string): Promise<any> {
+export async function fetchData(url: string): Promise<string> {
     if (typeof url !== 'string' || !url) {
         throw new Error("Invalid URL.");
     }

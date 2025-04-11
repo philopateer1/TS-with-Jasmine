@@ -29,6 +29,16 @@ describe('calculateSum', () => {
     it('should throw an error for non-array input', () => {
         expect(() => (0, index_2.calculateSum)(123)).toThrow(new Error("Input must be an array."));
     });
+    it('should handle extremely large numbers without overflow', () => {
+        const largeNumbers = [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+        const result = (0, index_2.calculateSum)(largeNumbers);
+        expect(result).toBe(Number.MAX_SAFE_INTEGER + Number.MAX_SAFE_INTEGER);
+    });
+    it('should return the single element when array has one element', () => {
+        const singleElementArray = [42];
+        const result = (0, index_2.calculateSum)(singleElementArray);
+        expect(result).toBe(42);
+    });
 });
 const index_3 = require("../index");
 describe('fetchData', () => {
@@ -42,5 +52,13 @@ describe('fetchData', () => {
     }));
     it('should throw an error on network error or failed response', () => __awaiter(void 0, void 0, void 0, function* () {
         yield expectAsync((0, index_3.fetchData)('https://dummyjson.com/user')).toBeRejectedWithError("Failed to fetch data.");
+    }));
+    it('should handle empty API response gracefully', () => __awaiter(void 0, void 0, void 0, function* () {
+        Promise.resolve({
+            json: () => Promise.resolve([]),
+            ok: true
+        });
+        const result = yield (0, index_3.fetchData)('https://dummyjson.com/user');
+        expect(result).toEqual([]);
     }));
 });

@@ -20,6 +20,18 @@ describe('calculateSum', () => {
     it('should throw an error for non-array input', () => {
         expect(() => calculateSum(123 as any)).toThrow(new Error("Input must be an array."));
     });
+
+    it('should handle extremely large numbers without overflow', () => {
+      const largeNumbers = [Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+      const result = calculateSum(largeNumbers);
+      expect(result).toBe(Number.MAX_SAFE_INTEGER + Number.MAX_SAFE_INTEGER);
+    });
+
+    it('should return the single element when array has one element', () => {
+      const singleElementArray = [42];
+      const result = calculateSum(singleElementArray);
+      expect(result).toBe(42);
+    });
 });
 
 import { fetchData } from '../index';
@@ -38,5 +50,15 @@ describe('fetchData', () => {
 
     it('should throw an error on network error or failed response', async () => {
         await expectAsync(fetchData('https://dummyjson.com/user')).toBeRejectedWithError("Failed to fetch data.");
+    });
+
+    it('should handle empty API response gracefully', async () => {
+        Promise.resolve({
+          json: () => Promise.resolve([]),
+          ok:true
+        })
+  
+      const result = await fetchData('https://dummyjson.com/user');
+      expect(result).toEqual([]);
     });
 });
